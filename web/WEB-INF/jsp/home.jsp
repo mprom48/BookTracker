@@ -52,9 +52,12 @@
   </div><!-- /.container-fluid -->
 </nav>
 	<div class="jumbotron">
+	<div class="container">
 	<h1>BookTracker Home</h1>
 	<h3>For Mae Lenore <3</h3>
 	</div>
+	</div>
+	<div class="container">
 	<h3><%=syndFeed.getTitle()%></h3>
 	<ul>
 		<%
@@ -69,5 +72,6 @@
 		</li>
 		<% } %>
 	</ul>
+	</div>
 </body>
 </html>
