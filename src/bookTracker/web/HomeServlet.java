@@ -28,7 +28,7 @@ public class HomeServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		URL url = new URL("http://feeds2.feedburner.com/thechildrensbookreview"); 
+		URL url = new URL("http://localhost:8080/BookTracker/news.rss"); 
 		SyndFeedInput syndFeedInput = new SyndFeedInput(); 
 		SyndFeed syndFeed = null; 
 		XmlReader xmlReader = new XmlReader(url); 

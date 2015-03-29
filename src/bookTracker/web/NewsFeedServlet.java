@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletConfig;
@@ -15,6 +16,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
+
+import bookTracker.data.NewsItem;
+import bookTracker.data.NewsItemDAO;
 
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndEntryImpl;
@@ -24,17 +29,7 @@ import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedOutput;
 
 public class NewsFeedServlet extends HttpServlet {
-
-	@Override
-	public void init(ServletConfig config) throws ServletException {
-		try{ 
-			Class.forName("com.mysql.jdbc.Driver"); 
-		}
-		catch(ClassNotFoundException e){
-			throw new ServletException(e); 
-		}
-	}
-
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -45,21 +40,17 @@ public class NewsFeedServlet extends HttpServlet {
 		feed.setDescription("This feed was created using ROME"); 
 		List<SyndEntry> entries = new ArrayList<SyndEntry>(); 
 		
-		try{ 
-			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/publisher", "root", ""); 
-			Statement stmt = conn.createStatement(); 
-			ResultSet rsEntries = stmt.executeQuery("SELECT * FROM news_item"); 
-			while(rsEntries.next()) { 
-				String title = rsEntries.getString("title"); 
-				String url = rsEntries.getString("url"); 
-				SyndEntry entry = new SyndEntryImpl(); 
-				entry.setTitle(title); 
-				entry.setLink(url);
-				entries.add(entry); 
-			}
-		}
-		catch (SQLException e) { 
-			throw new ServletException(e); 
+		List<NewsItem> newsItems = new NewsItemDAO().findAll(); 
+		Iterator<NewsItem> it = newsItems.iterator(); 
+		
+		while(it.hasNext()) { 
+			NewsItem newsItem = (NewsItem) it.next(); 
+			String title = newsItem.getTitle(); 
+			String url = newsItem.getURL(); 
+			SyndEntry entry = new SyndEntryImpl(); 
+			entry.setTitle(title);
+			entry.setLink(url);
+			entries.add(entry); 
 		}
 		
 		resp.setContentType("text/xml"); 
@@ -74,7 +65,5 @@ public class NewsFeedServlet extends HttpServlet {
 		}
 		
 	}
-	
-
 	
 }
